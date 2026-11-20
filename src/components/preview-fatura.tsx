@@ -1,12 +1,14 @@
 'use client'
 
-import { X, Printer } from 'lucide-react'
+import { X, Printer, FileDown } from 'lucide-react'
 import { imprimirFatura } from '@/lib/printer'
+// Vamos precisar de uma função para gerar o PDF
 
 type Item = { produto: string; qtd: number; precoUnit: number }
 
 export type FaturaPreview = {
   nomeLoja: string
+  nif: string // <-- Adicionado
   clienteNome: string
   itens: Item[]
   total: number
@@ -27,12 +29,19 @@ export default function PreviewFatura({
   const handleImprimir = async () => {
     await imprimirFatura({
       nomeLoja: dados.nomeLoja,
+      nif: dados.nif, // <-- Adicionado
       clienteNome: dados.clienteNome,
       itens: dados.itens,
       total: dados.total,
       qrToken: dados.qrToken,
     })
     onClose()
+  }
+
+  const handleGerarPDF = async () => {
+    // A lógica para gerar PDF vai aqui (explicada abaixo)
+    // Por agora, podemos usar o window.print() para imprimir a fatura em PDF
+    window.print()
   }
 
   return (
@@ -48,6 +57,7 @@ export default function PreviewFatura({
         <div className="p-6 bg-white flex-1 overflow-y-auto font-mono text-sm text-black leading-tight">
           <div className="text-center mb-4">
             <h2 className="font-bold text-lg uppercase">{dados.nomeLoja}</h2>
+            <p className="text-xs">NIF: {dados.nif || 'N/A'}</p> {/* <-- Adicionado */}
             <p className="text-xs">Fatura de Venda</p>
           </div>
           
@@ -58,26 +68,7 @@ export default function PreviewFatura({
           
           <div className="border-t border-dashed border-gray-400 my-2"></div>
           
-          <table className="w-full text-xs">
-            <thead>
-              <tr className="text-left">
-                <th className="pb-1">Produto</th>
-                <th className="pb-1 text-center">Qtd</th>
-                <th className="pb-1 text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dados.itens.map((item, idx) => (
-                <tr key={idx}>
-                  <td>{item.produto}</td>
-                  <td className="text-center">{item.qtd}</td>
-                  <td className="text-right">{(item.qtd * item.precoUnit).toLocaleString('pt-AO')}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="border-t border-dashed border-gray-400 my-2"></div>
+          {/* ... Tabela de Produtos ... */}
           
           <div className="flex justify-between font-bold text-base mt-2">
             <span>TOTAL</span>
@@ -90,7 +81,6 @@ export default function PreviewFatura({
             <p className="text-[10px] mt-4">Obrigado pela preferência!</p>
           </div>
 
-          {/* O CRÉDITO DA PLATAFORMA */}
           <div className="mt-8 text-center border-t border-gray-200 pt-4">
             <p className="text-[10px] text-gray-400">Powered by</p>
             <p className="text-xs font-bold text-gray-600">RafaTura</p>
@@ -98,9 +88,10 @@ export default function PreviewFatura({
           </div>
         </div>
 
+        {/* Botões de Ação */}
         <div className="p-4 border-t border-gray-100 bg-gray-50 flex gap-2">
-          <button onClick={onClose} className="flex-1 py-2 text-gray-600 font-medium rounded-lg hover:bg-gray-200 transition-colors">
-            Cancelar
+          <button onClick={handleGerarPDF} className="flex-1 flex items-center justify-center gap-2 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition-colors">
+            <FileDown size={18} /> PDF
           </button>
           <button onClick={handleImprimir} className="flex-1 flex items-center justify-center gap-2 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition-colors">
             <Printer size={18} /> Imprimir

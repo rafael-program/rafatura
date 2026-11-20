@@ -4,6 +4,7 @@ import ReceiptPrinterEncoder from '@point-of-sale/receipt-printer-encoder'
 
 type FaturaData = {
   nomeLoja: string
+  nif: string
   clienteNome: string
   itens: { produto: string; qtd: number; precoUnit: number }[]
   total: number
@@ -34,6 +35,7 @@ export async function imprimirFatura(dados: FaturaData) {
       .size(2, 2)
       .text(dados.nomeLoja)
       .size(1, 1)
+      .text(`NIF: ${dados.nif || 'N/A'}`)
       .text('Fatura de Venda')
       .bold(false)
       .newline()

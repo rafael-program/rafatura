@@ -3,7 +3,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 
-// Cliente Admin (Service Role) - Ignora as regras de RLS
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
@@ -26,9 +25,10 @@ export async function editarVendedor(formData: FormData) {
   const id = formData.get('id') as string
   const nome_loja = formData.get('nome_loja') as string
   const telefone = formData.get('telefone') as string
+  const nif = formData.get('nif') as string
   const tipo = formData.get('tipo') as string
 
-  await supabaseAdmin.from('vendedores').update({ nome_loja, telefone, tipo }).eq('id', id)
+  await supabaseAdmin.from('vendedores').update({ nome_loja, telefone, nif, tipo }).eq('id', id)
   revalidatePath('/admin')
   return { sucesso: true }
 }
@@ -36,6 +36,7 @@ export async function editarVendedor(formData: FormData) {
 export async function criarVendedor(formData: FormData) {
   const nome_loja = formData.get('nome_loja') as string
   const telefone = formData.get('telefone') as string
+  const nif = formData.get('nif') as string
   const senha = formData.get('senha') as string
   const tipo = formData.get('tipo') as string
 
@@ -54,9 +55,10 @@ export async function criarVendedor(formData: FormData) {
     id: authData.user.id,
     nome_loja,
     telefone,
+    nif,
     tipo,
     status: 'ativo',
-    saldo: 15 // Dá 15 faturas de bónus ao criar a conta!
+    saldo: 15
   })
 
   if (dbError) {
@@ -69,7 +71,6 @@ export async function criarVendedor(formData: FormData) {
 }
 
 export async function adicionarSaldoVendedor(id: string, quantidade: number) {
-  // Busca o saldo atual
   const { data: vendedor } = await supabaseAdmin
     .from('vendedores')
     .select('saldo')

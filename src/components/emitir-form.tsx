@@ -7,7 +7,7 @@ import PreviewFatura, { FaturaPreview } from './preview-fatura'
 
 type Item = { produto: string; qtd: number; precoUnit: number }
 
-export default function EmitirForm() {
+export default function EmitirForm({ nomeLoja, nif }: { nomeLoja: string, nif: string }) {
   const [cliente, setCliente] = useState('')
   const [pago, setPago] = useState(true)
   const [itens, setItens] = useState<Item[]>([{ produto: '', qtd: 1, precoUnit: 0 }])
@@ -57,7 +57,8 @@ export default function EmitirForm() {
     }
 
     setDadosParaPreview({
-      nomeLoja: 'Império de Biolos',
+      nomeLoja: nomeLoja,
+      nif: nif,
       clienteNome: cliente.trim(),
       itens: itensValidos,
       total: total,
@@ -83,7 +84,7 @@ export default function EmitirForm() {
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Fatura Gerada!</h2>
           <p className="text-gray-500 mb-8 max-w-md mx-auto">
-            A fatura foi registada no sistema. Pode agora pré-visualizar e imprimir para o seu cliente.
+            A fatura foi registada no sistema. Pode agora pré-visualizar, gerar PDF ou imprimir.
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -97,7 +98,7 @@ export default function EmitirForm() {
               onClick={() => setPreviewAberto(true)}
               className="flex items-center justify-center gap-2 px-8 py-3.5 bg-emerald-600 text-white font-semibold rounded-xl hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 transition-all"
             >
-              <Printer size={20} /> Pré-visualizar e Imprimir
+              <Printer size={20} /> Ver Fatura
             </button>
           </div>
         </div>
@@ -113,6 +114,8 @@ export default function EmitirForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      {/* ... (O resto do formulário mantém-se exatamente igual) ... */}
+      
       {/* Dados do Cliente */}
       <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
         <label className="block text-sm font-bold text-gray-800 mb-3">Nome do Cliente</label>
@@ -133,7 +136,6 @@ export default function EmitirForm() {
         
         {itens.map((item, idx) => (
           <div key={idx} className="flex flex-col sm:flex-row gap-3 items-start bg-white p-4 rounded-2xl border border-gray-100 shadow-sm relative group">
-            
             <div className="flex-1 w-full">
               <label className="block text-xs text-gray-500 mb-1 sm:hidden">Produto</label>
               <input
@@ -194,7 +196,6 @@ export default function EmitirForm() {
 
       {/* Status e Total */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-        
         <label className="flex items-center gap-3 cursor-pointer p-3 bg-gray-50 rounded-xl w-full sm:w-auto">
           <input
             type="checkbox"
@@ -205,7 +206,6 @@ export default function EmitirForm() {
           <span className="text-sm font-medium text-gray-700">Cliente já pagou</span>
         </label>
 
-        {/* VISOR DO TOTAL */}
         <div className="bg-gray-900 rounded-2xl px-6 py-4 w-full sm:w-auto min-w-[250px] shadow-lg">
           <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Total a Pagar</p>
           <div className="text-3xl font-bold text-emerald-400 font-mono tracking-tight flex items-baseline gap-1">

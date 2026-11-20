@@ -7,9 +7,10 @@ export default async function EmitirPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Buscamos o nome_loja, status, saldo e o NIF
   const { data: vendedor } = await supabase
     .from('vendedores')
-    .select('nome_loja, status, saldo')
+    .select('nome_loja, status, saldo, nif')
     .eq('id', user!.id)
     .single()
 
@@ -75,7 +76,11 @@ export default async function EmitirPage() {
       </header>
 
       <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-6 sm:p-10">
-        <EmitirForm />
+        {/* Passamos o nomeLoja e o nif como props para o formulário */}
+        <EmitirForm 
+          nomeLoja={vendedor?.nome_loja || 'Loja'} 
+          nif={vendedor?.nif || ''} 
+        />
       </div>
     </div>
   )
