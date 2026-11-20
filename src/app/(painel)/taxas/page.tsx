@@ -14,7 +14,6 @@ export default async function TaxasPage() {
   const saldo = vendedor?.saldo || 0
   const nomeLoja = vendedor?.nome_loja || 'Vendedor'
 
-  // Link do WhatsApp com mensagem pré-preenchida
   const whatsappUrl = `https://wa.me/244957377424?text=${encodeURIComponent(`Olá RafaTura, sou a loja ${nomeLoja}. Acabei de efetuar o pagamento da taxa. Segue o comprovativo:`)}`
 
   return (
@@ -49,32 +48,34 @@ export default async function TaxasPage() {
           <h3 className="font-bold text-gray-900 mb-4">Comprar Saldo</h3>
           
           <div className="space-y-4 flex-1">
+            {/* Pacote de 5 Faturas */}
             <div className="p-5 border-2 border-emerald-500 bg-emerald-50 rounded-xl cursor-pointer relative">
               <span className="absolute -top-3 left-4 bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
-                <Zap size={12} /> Pacote Inicial
+                <Zap size={12} /> Recomendado
               </span>
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="font-bold text-gray-900 text-lg">15 Faturas</p>
-                  <p className="text-sm text-gray-500">Ideal para começar</p>
+                  <p className="font-bold text-gray-900 text-lg">5 Faturas</p>
+                  <p className="text-sm text-gray-500">Para o dia a dia</p>
                 </div>
-                <span className="font-bold text-emerald-600 text-xl">500 Kz</span>
+                <span className="font-bold text-emerald-600 text-xl">2.000 Kz</span>
               </div>
             </div>
 
+            {/* Pacote de 15 Faturas */}
             <div className="p-5 border border-gray-200 rounded-xl hover:border-emerald-500 cursor-pointer transition-colors">
               <div className="flex justify-between items-center">
                 <div>
-                  <p className="font-bold text-gray-900 text-lg">60 Faturas</p>
-                  <p className="text-sm text-gray-500">Para lojas com mais movimento</p>
+                  <p className="font-bold text-gray-900 text-lg">15 Faturas</p>
+                  <p className="text-sm text-gray-500">Poupa mais</p>
                 </div>
-                <span className="font-bold text-gray-900 text-xl">2.000 Kz</span>
+                <span className="font-bold text-gray-900 text-xl">5.500 Kz</span>
               </div>
             </div>
           </div>
 
           <p className="text-xs text-gray-400 mt-6 text-center">
-            Cada fatura emitida custa 33 Kz.
+            Cada fatura emitida custa 400 Kz.
           </p>
         </div>
 

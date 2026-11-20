@@ -7,6 +7,7 @@ type Item = { produto: string; qtd: number; precoUnit: number }
 
 export async function emitirFatura(input: {
   clienteNome: string
+  clienteTelefone: string
   itens: Item[]
   pago: boolean
 }): Promise<{ ok: true; faturaId: string } | { ok: false; erro: string }> {
@@ -39,6 +40,7 @@ export async function emitirFatura(input: {
     .insert({
       vendedor_id: user.id,
       cliente_nome: input.clienteNome,
+      cliente_telefone: input.clienteTelefone,
       itens: input.itens,
       total,
       pago: input.pago,

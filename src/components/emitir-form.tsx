@@ -9,6 +9,7 @@ type Item = { produto: string; qtd: number; precoUnit: number }
 
 export default function EmitirForm({ nomeLoja, nif }: { nomeLoja: string, nif: string }) {
   const [cliente, setCliente] = useState('')
+  const [clienteTelefone, setClienteTelefone] = useState('')
   const [pago, setPago] = useState(true)
   const [itens, setItens] = useState<Item[]>([{ produto: '', qtd: 1, precoUnit: 0 }])
   const [erro, setErro] = useState('')
@@ -46,6 +47,7 @@ export default function EmitirForm({ nomeLoja, nif }: { nomeLoja: string, nif: s
     setLoading(true)
     const result = await emitirFatura({
       clienteNome: cliente.trim(),
+      clienteTelefone: clienteTelefone.trim(),
       itens: itensValidos,
       pago,
     })
@@ -60,6 +62,7 @@ export default function EmitirForm({ nomeLoja, nif }: { nomeLoja: string, nif: s
       nomeLoja: nomeLoja,
       nif: nif,
       clienteNome: cliente.trim(),
+      clienteTelefone: clienteTelefone.trim(),
       itens: itensValidos,
       total: total,
       qrToken: result.faturaId,
@@ -71,6 +74,7 @@ export default function EmitirForm({ nomeLoja, nif }: { nomeLoja: string, nif: s
   function resetForm() {
     setFaturaGerada(null)
     setCliente('')
+    setClienteTelefone('')
     setItens([{ produto: '', qtd: 1, precoUnit: 0 }])
     setDadosParaPreview(null)
   }
@@ -84,7 +88,7 @@ export default function EmitirForm({ nomeLoja, nif }: { nomeLoja: string, nif: s
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-2">Fatura Gerada!</h2>
           <p className="text-gray-500 mb-8 max-w-md mx-auto">
-            A fatura foi registada no sistema. Pode agora pré-visualizar, gerar PDF ou imprimir.
+            A fatura foi registada com sucesso. Pode agora pré-visualizar, gerar PDF ou imprimir.
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -113,68 +117,76 @@ export default function EmitirForm({ nomeLoja, nif }: { nomeLoja: string, nif: s
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
-      {/* ... (O resto do formulário mantém-se exatamente igual) ... */}
-      
-      {/* Dados do Cliente */}
-      <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
-        <label className="block text-sm font-bold text-gray-800 mb-3">Nome do Cliente</label>
-        <input
-          value={cliente}
-          onChange={(e) => setCliente(e.target.value)}
-          placeholder="Ex: João Manuel"
-          required
-          className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all shadow-sm"
-        />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-bold text-gray-800 mb-2">Nome do Cliente</label>
+          <input
+            value={cliente}
+            onChange={(e) => setCliente(e.target.value)}
+            placeholder="Ex: João Manuel"
+            required
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-bold text-gray-800 mb-2">Telefone do Cliente</label>
+          <input
+            type="tel"
+            value={clienteTelefone}
+            onChange={(e) => setClienteTelefone(e.target.value)}
+            placeholder="Ex: 923 000 000"
+            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
+          />
+          <p className="text-xs text-gray-400 mt-1">Opcional. Para envio via WhatsApp.</p>
+        </div>
       </div>
 
-      {/* Lista de Produtos */}
       <div className="space-y-4">
-        <div className="flex justify-between items-end mb-2">
-          <label className="block text-sm font-bold text-gray-800">Produtos / Serviços</label>
+        {/* CABEÇALHO DOS PRODUTOS */}
+        <div className="flex gap-3 px-2 text-xs font-bold text-gray-500 uppercase tracking-wider">
+          <div className="flex-1">Produto / Serviço</div>
+          <div className="w-20 text-center">Qtd</div>
+          <div className="w-28 text-right">Preço (Kz)</div>
+          <div className="w-10"></div>
         </div>
-        
+
         {itens.map((item, idx) => (
-          <div key={idx} className="flex flex-col sm:flex-row gap-3 items-start bg-white p-4 rounded-2xl border border-gray-100 shadow-sm relative group">
+          <div key={idx} className="flex flex-col sm:flex-row gap-3 items-start bg-white p-3 sm:p-0 rounded-xl border border-gray-100 sm:border-none shadow-sm sm:shadow-none relative group">
             <div className="flex-1 w-full">
-              <label className="block text-xs text-gray-500 mb-1 sm:hidden">Produto</label>
               <input
                 value={item.produto}
                 onChange={(e) => atualizarItem(idx, 'produto', e.target.value)}
                 placeholder="Nome do produto"
-                className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all"
               />
             </div>
             
-            <div className="flex gap-3 w-full sm:w-auto">
+            <div className="flex gap-3 w-full sm:w-auto mt-2 sm:mt-0">
               <div className="w-20">
-                <label className="block text-xs text-gray-500 mb-1 sm:hidden">Qtd</label>
                 <input
                   type="number"
                   min={1}
                   value={item.qtd}
                   onChange={(e) => atualizarItem(idx, 'qtd', Number(e.target.value))}
-                  placeholder="1"
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-center"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-2 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all text-center font-medium"
                 />
               </div>
               <div className="w-28">
-                <label className="block text-xs text-gray-500 mb-1 sm:hidden">Preço</label>
                 <input
                   type="number"
                   min={0}
                   value={item.precoUnit}
                   onChange={(e) => atualizarItem(idx, 'precoUnit', Number(e.target.value))}
-                  placeholder="0"
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all text-right"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all text-right font-medium"
                 />
               </div>
-              <div className="flex items-end">
+              <div className="flex items-center">
                 <button
                   type="button"
                   onClick={() => removerItem(idx)}
                   disabled={itens.length === 1}
-                  className="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-lg disabled:opacity-30 transition-colors"
+                  className="p-3 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl disabled:opacity-30 transition-colors"
                 >
                   <Trash2 size={20} />
                 </button>
@@ -186,7 +198,7 @@ export default function EmitirForm({ nomeLoja, nif }: { nomeLoja: string, nif: s
         <button
           type="button"
           onClick={adicionarItem}
-          className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-emerald-200 text-emerald-700 font-semibold rounded-2xl hover:bg-emerald-50 transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-emerald-200 text-emerald-700 font-semibold rounded-xl hover:bg-emerald-50 transition-colors mt-2"
         >
           <Plus size={18} /> Adicionar Produto
         </button>
@@ -194,7 +206,6 @@ export default function EmitirForm({ nomeLoja, nif }: { nomeLoja: string, nif: s
 
       <hr className="border-gray-100" />
 
-      {/* Status e Total */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
         <label className="flex items-center gap-3 cursor-pointer p-3 bg-gray-50 rounded-xl w-full sm:w-auto">
           <input

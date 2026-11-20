@@ -1,8 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { History, FileText } from 'lucide-react'
 import BotaoReimprimir from '@/components/botao-reimprimir'
+import { connection } from 'next/server'
 
 export default async function HistoricoPage() {
+  await connection() // Silencia o aviso do Date.now() no terminal
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -14,7 +17,7 @@ export default async function HistoricoPage() {
       .order('created_at', { ascending: false }),
     supabase
       .from('vendedores')
-      .select('nome_loja')
+      .select('nome_loja, nif')
       .eq('id', user!.id)
       .single()
   ])
@@ -58,7 +61,7 @@ export default async function HistoricoPage() {
                   </span>
                 </td>
                 <td className="px-6 py-5 text-right">
-                  <BotaoReimprimir fatura={f} nomeLoja={vendedor?.nome_loja || 'RafaTura'} />
+                  <BotaoReimprimir fatura={f} nomeLoja={vendedor?.nome_loja || 'RafaTura'} nif={vendedor?.nif || ''} />
                 </td>
               </tr>
             ))}
