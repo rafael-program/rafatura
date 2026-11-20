@@ -1,6 +1,7 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
-import { FileText, CheckCircle2, ShieldCheck } from 'lucide-react'
+import { CheckCircle2, ShieldCheck } from 'lucide-react'
 
 type FaturaComVendedor = {
   id: string
@@ -11,14 +12,10 @@ type FaturaComVendedor = {
   vendedores: { nome_loja: string } | null
 }
 
-export default async function FaturaPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+async function FaturaContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
-  
+
   const { data } = await supabase
     .from('faturas')
     .select('*, vendedores(nome_loja)')
@@ -30,10 +27,7 @@ export default async function FaturaPage({
 
   return (
     <div className="max-w-lg mx-auto py-10">
-      {/* Cartão Principal */}
       <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-gray-100 overflow-hidden">
-        
-        {/* Cabeçalho de Sucesso */}
         <div className="bg-emerald-50 px-8 pt-10 pb-8 text-center border-b border-emerald-100">
           <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle2 className="text-emerald-600" size={40} />
@@ -42,7 +36,6 @@ export default async function FaturaPage({
           <p className="text-emerald-700 mt-1">Documento verificado com sucesso</p>
         </div>
 
-        {/* Detalhes da Fatura */}
         <div className="p-8">
           <div className="flex justify-between items-start mb-6">
             <div>
@@ -77,10 +70,33 @@ export default async function FaturaPage({
           </div>
         </div>
       </div>
-      
+
       <p className="text-center text-sm text-gray-400 mt-6">
         Fatura emitida eletronicamente via <strong>RafaTura</strong>.
       </p>
     </div>
+  )
+}
+
+function FaturaSkeleton() {
+  return (
+    <div className="max-w-lg mx-auto py-10 animate-pulse">
+      <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
+        <div className="bg-emerald-50 h-40" />
+        <div className="p-8 space-y-4">
+          <div className="h-6 bg-gray-200 rounded w-1/2" />
+          <div className="h-32 bg-gray-200 rounded-2xl" />
+          <div className="h-4 bg-gray-200 rounded w-1/3 mx-auto" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function FaturaPage({ params }: { params: Promise<{ id: string }> }) {
+  return (
+    <Suspense fallback={<FaturaSkeleton />}>
+      <FaturaContent params={params} />
+    </Suspense>
   )
 }

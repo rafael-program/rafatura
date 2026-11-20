@@ -1,3 +1,4 @@
+// app/(painel)/apoio/page.tsx
 import { Headphones, Phone, MessageCircle } from 'lucide-react'
 
 export default function ApoioPage() {

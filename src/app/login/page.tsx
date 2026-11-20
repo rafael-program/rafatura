@@ -3,16 +3,19 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Phone, Mail, Lock, ArrowRight } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
   const supabase = createClient()
+  const router = useRouter()
   const [identificador, setIdentificador] = useState('')
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Link do WhatsApp com mensagem pré-preenchida
-  const whatsappAdmin = `https://wa.me/244957377424?text=${encodeURIComponent('Olá, preciso de ajuda para acessar a minha conta na RafaTura.')}`
+  const whatsappAdmin = `https://wa.me/244957377424?text=${encodeURIComponent(
+    'Olá, preciso de ajuda para acessar a minha conta na RafaTura.'
+  )}`
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -23,8 +26,8 @@ export default function LoginPage() {
     const isEmail = identificador.includes('@')
 
     if (!isEmail) {
-      const phoneFormatted = identificador.startsWith('+') 
-        ? identificador 
+      const phoneFormatted = identificador.startsWith('+')
+        ? identificador
         : `+244${identificador.replace(/\D/g, '')}`
       emailParaLogin = `${phoneFormatted}@rafatura.com`
     }
@@ -58,15 +61,14 @@ export default function LoginPage() {
     setLoading(false)
     if (isEmail) {
       document.cookie = 'admin_token=logado; path=/; max-age=604800'
-      window.location.href = '/admin'
+      router.push('/admin')
     } else {
-      window.location.href = '/emitir'
+      router.push('/emitir')
     }
   }
 
   return (
     <div className="min-h-screen flex bg-white">
-      
       {/* Lado Esquerdo: Branding e Animação */}
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-emerald-900 via-emerald-700 to-teal-800 relative overflow-hidden flex-col justify-between p-12 text-white">
         <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-50 animate-blob"></div>
@@ -95,20 +97,18 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 text-sm text-emerald-200/60 flex items-center gap-2">
-          <span>© {new Date().getFullYear()} RafaTura. Todos os direitos reservados.</span>
+          <span>© 2026 RafaTura. Todos os direitos reservados.</span>
         </div>
       </div>
 
       {/* Lado Direito: Formulário */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 relative">
-        
         <div className="absolute top-8 left-8 lg:hidden flex items-center gap-2">
           <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-xl">R</div>
           <span className="text-xl font-bold text-gray-900">RafaTura</span>
         </div>
 
         <div className="w-full max-w-md space-y-8">
-          
           <div className="text-center lg:text-left">
             <h2 className="text-3xl font-bold text-gray-900">Bem-vindo de volta</h2>
             <p className="text-gray-500 mt-2">Insira as suas credenciais para aceder à conta.</p>
@@ -179,7 +179,7 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-gray-500 mt-8">
             Ainda não tem conta? <br className="sm:hidden" />
-            <a 
+            <a
               href={whatsappAdmin}
               target="_blank"
               rel="noreferrer"
@@ -188,7 +188,6 @@ export default function LoginPage() {
               Contacte o administrador
             </a>
           </p>
-
         </div>
       </div>
     </div>

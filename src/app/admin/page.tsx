@@ -26,8 +26,14 @@ function AdminSkeleton() {
   )
 }
 
-async function AdminData({ filtro, visao }: { filtro: string, visao: string }) {
+async function AdminData({ searchParams }: { searchParams: Promise<{ filtro?: string, ver?: string }> }) {
   await connection()
+
+  // Correção: desestruturar 'ver' como 'visao' para coincidir com o resto do código
+  const { filtro = 'hoje', ver: visao = 'dashboard' } = await searchParams
+
+  const cookieStore = await cookies()
+  if (cookieStore.get('admin_token')?.value !== 'logado') redirect('/login')
 
   const supabaseAdmin = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -37,9 +43,16 @@ async function AdminData({ filtro, visao }: { filtro: string, visao: string }) {
   const dataLimite = new Date()
   if (filtro === 'semana') dataLimite.setDate(dataLimite.getDate() - 7)
   if (filtro === 'mes') dataLimite.setMonth(dataLimite.getMonth() - 1)
-  
-  const { data: faturasFiltradas } = await supabaseAdmin.from('faturas').select('*, vendedores(nome_loja)').gte('created_at', dataLimite.toISOString()).order('created_at', { ascending: false })
-  const { data: vendedores } = await supabaseAdmin.from('vendedores').select('*').order('created_at', { ascending: false })
+
+  const { data: faturasFiltradas } = await supabaseAdmin
+    .from('faturas')
+    .select('*, vendedores(nome_loja)')
+    .gte('created_at', dataLimite.toISOString())
+    .order('created_at', { ascending: false })
+  const { data: vendedores } = await supabaseAdmin
+    .from('vendedores')
+    .select('*')
+    .order('created_at', { ascending: false })
 
   const totalFaturado = faturasFiltradas?.reduce((acc, f) => acc + Number(f.total), 0) || 0
   const totalVendedores = vendedores?.length || 0
@@ -243,12 +256,11 @@ async function AdminData({ filtro, visao }: { filtro: string, visao: string }) {
   )
 }
 
-export default async function AdminDashboard({ searchParams }: { searchParams: Promise<{ filtro?: string, ver?: string }> }) {
-  const cookieStore = await cookies()
-  if (cookieStore.get('admin_token')?.value !== 'logado') redirect('/login')
-
-  const { filtro = 'hoje', ver = 'dashboard' } = await searchParams
-
+export default function AdminDashboard({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ filtro?: string, ver?: string }> 
+}) {
   return (
     <div className="flex min-h-screen bg-[#F8FAFC]">
       <aside className="w-64 bg-white border-r border-gray-100 flex flex-col fixed h-full z-20 shadow-sm">
@@ -258,16 +270,16 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
         </div>
         
         <nav className="flex-1 p-4 space-y-2">
-          <a href="/admin" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${ver === 'dashboard' ? 'bg-emerald-50 text-emerald-700' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`}>
+          <a href="/admin" className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-gray-500 hover:bg-gray-50 hover:text-gray-900">
             <LayoutDashboard size={20} /> Dashboard
           </a>
-          <a href="/admin?ver=vendedores" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${ver === 'vendedores' ? 'bg-emerald-50 text-emerald-700' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`}>
+          <a href="/admin?ver=vendedores" className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-gray-500 hover:bg-gray-50 hover:text-gray-900">
             <Users size={20} /> Vendedores
           </a>
-          <a href="/admin?ver=faturas" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${ver === 'faturas' ? 'bg-emerald-50 text-emerald-700' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`}>
+          <a href="/admin?ver=faturas" className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-gray-500 hover:bg-gray-50 hover:text-gray-900">
             <FileText size={20} /> Faturas
           </a>
-          <a href="/admin?ver=definicoes" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${ver === 'definicoes' ? 'bg-emerald-50 text-emerald-700' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`}>
+          <a href="/admin?ver=definicoes" className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-gray-500 hover:bg-gray-50 hover:text-gray-900">
             <Settings size={20} /> Definições
           </a>
         </nav>
@@ -290,22 +302,14 @@ export default async function AdminDashboard({ searchParams }: { searchParams: P
         <header className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 capitalize">
-              {ver === 'dashboard' ? 'Visão Geral' : ver}
+              Painel de Administração
             </h1>
             <p className="text-gray-500 text-sm mt-1">Bem-vindo de volta, Rafael.</p>
-          </div>
-          
-          <div className="flex bg-white rounded-xl p-1 shadow-sm border border-gray-100">
-            {['hoje', 'semana', 'mes'].map((f) => (
-              <a key={f} href={`?ver=${ver}&filtro=${f}`} className={`px-5 py-2 rounded-lg text-sm font-medium capitalize transition-all ${filtro === f ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900'}`}>
-                {f === 'mes' ? 'Mês' : f}
-              </a>
-            ))}
           </div>
         </header>
 
         <Suspense fallback={<AdminSkeleton />}>
-          <AdminData filtro={filtro} visao={ver} />
+          <AdminData searchParams={searchParams} />
         </Suspense>
       </main>
     </div>
