@@ -58,7 +58,7 @@ export async function criarVendedor(formData: FormData) {
     nif,
     tipo,
     status: 'ativo',
-    saldo: 15
+    saldo: 0 // <-- O SALDO COMEÇA EM ZERO
   })
 
   if (dbError) {

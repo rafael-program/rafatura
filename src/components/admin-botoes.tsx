@@ -8,6 +8,7 @@ type Vendedor = {
   id: string
   nome_loja: string
   telefone: string
+  nif: string
   tipo: string
   status: string
   saldo: number
@@ -83,6 +84,11 @@ export function AcoesVendedor({ vendedor }: { vendedor: Vendedor }) {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
                 <input name="telefone" defaultValue={vendedor.telefone} required className="w-full border border-gray-300 p-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none" />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">NIF</label>
+                <input name="nif" defaultValue={vendedor.nif || ''} className="w-full border border-gray-300 p-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none" />
               </div>
 
               <div>
@@ -174,6 +180,10 @@ export function BotaoNovoVendedor() {
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
             <input name="telefone" placeholder="Ex: +244926572603" required className="w-full border border-gray-300 p-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">NIF</label>
+            <input name="nif" placeholder="Ex: 5412345678" className="w-full border border-gray-300 p-3 rounded-xl text-gray-900 focus:ring-2 focus:ring-emerald-500 outline-none" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Senha de Acesso</label>
