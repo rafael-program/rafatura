@@ -32,7 +32,7 @@ async function EmitirContent() {
   if (saldo <= 0) {
     return (
       <div className="max-w-2xl mx-auto mt-10">
-        <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-10 text-center animate-in fade-in zoom-in duration-500">
+        <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-6 sm:p-10 text-center animate-in fade-in zoom-in duration-500">
           <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
             <AlertCircle className="text-amber-500" size={48} />
           </div>
@@ -54,23 +54,23 @@ async function EmitirContent() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto py-6">
-      <header className="mb-8 flex items-center justify-between">
+    <div className="max-w-3xl mx-auto py-6 px-4 sm:px-0">
+      <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <FileText className="text-emerald-600" size={32} />
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <FileText className="text-emerald-600" size={28} /> 
             Ponto de Venda
           </h1>
-          <p className="text-gray-500 mt-2 text-lg">
+          <p className="text-gray-500 mt-2 text-base sm:text-lg">
             Olá, <span className="font-semibold text-gray-800">{vendedor?.nome_loja}</span>. Tens <strong>{saldo}</strong> faturas disponíveis.
           </p>
         </div>
-        <div className="hidden sm:flex w-16 h-16 bg-emerald-100 rounded-2xl items-center justify-center">
-          <FileText className="text-emerald-600" size={32} />
+        <div className="hidden sm:flex w-16 h-16 bg-emerald-100 rounded-2xl items-center justify-center shrink-0">
+           <FileText className="text-emerald-600" size={32} />
         </div>
       </header>
 
-      <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-6 sm:p-10">
+      <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-4 sm:p-10">
         <EmitirForm nomeLoja={vendedor?.nome_loja || 'Loja'} nif={vendedor?.nif || ''} />
       </div>
     </div>
@@ -79,7 +79,7 @@ async function EmitirContent() {
 
 function EmitirSkeleton() {
   return (
-    <div className="max-w-3xl mx-auto py-6 animate-pulse space-y-6">
+    <div className="max-w-3xl mx-auto py-6 px-4 sm:px-0 animate-pulse space-y-6">
       <div className="h-10 bg-gray-200 rounded w-1/2" />
       <div className="h-96 bg-gray-200 rounded-3xl" />
     </div>
