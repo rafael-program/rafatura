@@ -1,4 +1,3 @@
-// src/app/api/emitir/route.ts
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
@@ -62,7 +61,9 @@ export async function POST(req: Request) {
       .eq('id', vendedor_id)
 
     return NextResponse.json({ success: true, fatura })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    // Tratamento seguro do erro (sem 'any')
+    const message = error instanceof Error ? error.message : 'Erro desconhecido'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
