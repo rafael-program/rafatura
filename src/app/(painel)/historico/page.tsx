@@ -98,7 +98,7 @@ function TabelaSkeleton() {
       <div className="h-16 bg-gray-50 border-b border-gray-100" />
       {[...Array(5)].map((_, i) => (
         <div key={i} className="h-20 border-b border-gray-50 px-6 flex items-center gap-4">
-          <div className="h-4 bg-gray-200 rounded w-1/4" />
+         <div className="h-4 bg-gray-200 rounded w-1/4" />
           <div className="h-4 bg-gray-200 rounded w-1/4" />
           <div className="h-4 bg-gray-200 rounded w-1/4" />
         </div>
